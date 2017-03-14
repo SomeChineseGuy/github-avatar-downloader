@@ -14,56 +14,68 @@ function getRepoContributors(repoOwner, repoName, cb) {
       'User-Agent': 'request'
     }
   };
-    request.get(options, function (error, response, body)  {
+  request.get(options, function (error, response, body)  {
 
-      if(!error && response.statusCode == 200) {
-        var data = JSON.parse(body);
-        // console.log('data', data);
+    if(!error && response.statusCode == 200) {
+      var data = JSON.parse(body);
 
-        // var result = data.map(function(value) {
-        //   return value.avatar_url
-        //   // console.log(value.avatar_url);
-        // });
+      // const avatar_urls = data.map(res => res.avatar_url);
+      // const names = data.map(res1 => res1.login);
 
-        const result = data.map(res => res.avatar_url);
+      // // console.log(avatar_urls.length);
+      // // console.log(avatar_urls[0]);
+      // // console.log(names.length);
+      // // console.log(names[0]);
+
+      // avatar_urls = ['http://this.that.com', 'http://the.other.sh.it', ...]
+      // names = ['jeresig', 'timmywil', 'dmethvin'..];
+
+      // results = [
+      //   { url: 'blah',  name: 'jeresig'},
+      //   { url: 'blah',  name: 'jeresig'},
+      //   { url: 'blah',  name: 'jeresig'},
+      // ]
 
 
-        if (error){
-          console.log('Error, status:', response.statusCode);
-        }
 
-        if (response !== 200) {
-          console.log ('Correct outcome. Status code is:', response.statusCode);
-        }
 
-        cb(null, result)
+
+      if (error){
+        console.log('Error, status:', response.statusCode);
       }
+
+      if (response !== 200) {
+        console.log ('Correct outcome. Status code is:', response.statusCode);
+      }
+      // console.log(name)
+      cb(null, data)
+    }
+    // console.log(name)
   });
 }
 
 getRepoContributors("jquery", "jquery", function(err, result) {
-  // console.log("Errors:", err);
-  // console.log("Result:", result);
   if(!err) {
-    for(url of result) {
-      const origFileName = url.split('/')[4];
-      const newFileName = `./${origFileName}.jpg`;
-      // console.log(fileName)
-      downloadImageByURL(url, newFileName);
+    for(record of result) {
+      console.log(record.login + "   :   " + record.avatar_url);
+      // const origFileName = url.split('/')[4];
+      // const newFileName = `./${origFileName}.jpg`;
+      // downloadImageByURL(url, newFileName);
     }
   }
+  // console.log(name)
 });
 
-function downloadImageByURL(url, filePath) {
-  request.get(url)               // Note 1
-       .on('error', function (err) {                                   // Note 2
-         throw err;
-       })
-       .on('response', function (response) {                           // Note 3
-         console.log('Response Status Code: ', response.statusCode);
-       })
-       .pipe(fs.createWriteStream(filePath));
-}
+// function downloadImageByURL(url, filePath) {
+//   request.get(url)
+//   .on('error', function (err) {
+//     throw err;
+//   })
+//   .on('response', function (response) {
+//     console.log('Response Status Code: ', response.statusCode);
+//  })
+//   .pipe(fs.createWriteStream(filePath));
+// }
 
 
 // downloadImageByURL();
