@@ -1,13 +1,9 @@
-var GITHUB_USER = "SomeChineseGuy";
-var GITHUB_TOKEN = "0ed5ec94f7c3e10ddd85e154ee15b5db167c597e";
-
+const GITHUB_USER = "SomeChineseGuy";
+const GITHUB_TOKEN = "0ed5ec94f7c3e10ddd85e154ee15b5db167c597e";
+var request = require('request');
+var fs = require('fs')
 console.log('Welcome to the GitHub Avatar Downloader!');
 
-var request = require('request');
-
-
-
-var fs = require('fs');
 
 function getRepoContributors(repoOwner, repoName, cb) {
   var requestURL = 'https://'+ GITHUB_USER + ':' + GITHUB_TOKEN + '@api.github.com/repos/' + repoOwner + '/' + repoName + '/contributors';
@@ -17,26 +13,28 @@ function getRepoContributors(repoOwner, repoName, cb) {
       'User-Agent': 'request'
     }
   };
-  var space = "";
-  request.get(options)
-  .on('error', function (err) {
-         throw err;
-       })
-       .on('response', function (response) {
-        response.setEncoding('utf8');
-        console.log('Response Status Code: ', response.statusCode);
-        response.on('data', (data) => {
-          space = data + space;
-         });
-         response.on('end', function() {
-          console.log(space);
-        });
+    request.get(options, function (error, response, body)  {
+
+      if(!error && response.statusCode == 200) {
+        var data = JSON.parse(body);
+
+        var result = data.map(function(value) {
+          console.log(value.avatar_url);
         })
 
+        if (error){
+          console.log('Error, status:', response.statusCode)
+        }
+
+        if (response !== 200) {
+          console.log ('Correct outcome. Status code is:', response.statusCode)
+        }
+
+    }
+});
 }
 
 getRepoContributors("jquery", "jquery", function(err, result) {
   console.log("Errors:", err);
   console.log("Result:", result);
 });
-
